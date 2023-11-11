@@ -69,8 +69,6 @@ dependencies {
     implementation("com.google.code.gson:gson:2.9.0")
 
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-jackson:2.1.0")
 
     implementation ("androidx.compose.material:material-icons-extended:1.5.3")
 
