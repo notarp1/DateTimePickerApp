@@ -85,14 +85,15 @@ fun MainPage(viewModel: DateTimeMainActivityViewModel) {
         val guideLine9f = createGuidelineFromTop(0.9f)
 
 
-
         when {
             viewModel.showErrorMessageSQLConstraint -> {
                 ShowToastMessage(message = stringResource(R.string.already_checked_in))
+                viewModel.setSQLiteConstraintException(false)
             }
 
             viewModel.showUnsupportedOperationException -> {
                 ShowToastMessage(message = stringResource(R.string.you_cannot_check_in_in_the_future))
+                viewModel.setUnsupportedOperationException(false)
             }
         }
 

@@ -59,9 +59,9 @@ class DateTimeMainActivityViewModel(private val employeeRepo: IEmployeeMockRepos
                 employeeRepo.postDateTime(dateTime)
 
             } catch (e: SQLiteConstraintException) {
-                handleSQLiteConstraintException()
+                _showErrorMessageSQLConstraint = true
             } catch (e: UnsupportedOperationException) {
-                handleUnsupportedOperationException()
+                _showUnsupportedOperationException = true
             } catch (e: Exception) {
                 print(e)
             }
@@ -123,22 +123,13 @@ class DateTimeMainActivityViewModel(private val employeeRepo: IEmployeeMockRepos
     }
 
     /* Error Handling */
-    private fun handleSQLiteConstraintException() {
-        _showErrorMessageSQLConstraint = true
-
-        viewModelScope.launch {
-            delay(1000)
-            _showErrorMessageSQLConstraint = false
-        }
+    fun setSQLiteConstraintException(bool: Boolean) {
+        _showErrorMessageSQLConstraint = bool
     }
 
-    private fun handleUnsupportedOperationException() {
-        _showUnsupportedOperationException = true
+    fun setUnsupportedOperationException(bool: Boolean) {
+        _showUnsupportedOperationException = bool
 
-        viewModelScope.launch {
-            delay(1000)
-            _showErrorMessageSQLConstraint = false
-        }
     }
 
 }
