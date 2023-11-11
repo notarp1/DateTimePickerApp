@@ -1,46 +1,47 @@
-package com.example.datetimetest
+package com.example.datetimepickerapp
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.example.datetimepickerapp.toOrdinal
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
 import java.time.temporal.WeekFields
 import java.util.*
 
-class CalendarHandler {
+class DatePickerHandler {
 
-    private var _today = LocalDate.now()
-    val today : LocalDate get() = _today
+    private var _currentDate = LocalDate.now()
+    val currentDate : LocalDate get() = _currentDate
 
-    private var _initialWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+
+
+    private var _initialWeek = currentDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
     private val initialWeek: LocalDate get() = _initialWeek
 
-    private var _startOfWeek by mutableStateOf(today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)))
+    private var _startOfWeek by mutableStateOf(currentDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)))
     val startOfWeek: LocalDate get() = _startOfWeek
 
     private val endOfWeek : LocalDate get() = _startOfWeek.plusDays(6)
 
-    private var _selectedDay by mutableStateOf(today)
-    val selectedDay: LocalDate get() =  _selectedDay
+    private var _selectedDate by mutableStateOf(currentDate)
+    val selectedDate: LocalDate get() =  _selectedDate
 
 
 
-    private val dayString: String get() = selectedDay.dayOfWeek.toString().lowercase()
+
+    private val dayString: String get() = selectedDate.dayOfWeek.toString().lowercase()
         .replaceFirstChar { it.uppercase()  }
-    private val dayOfMonthString: String get() = selectedDay.dayOfMonth.toOrdinal()
-    private val monthString: String get() = selectedDay.month.toString().lowercase()
+    private val dayOfMonthString: String get() = selectedDate.dayOfMonth.toOrdinal()
+    private val monthString: String get() = selectedDate.month.toString().lowercase()
         .replaceFirstChar { it.uppercase()  }
-    private val yearString: String get() = selectedDay.year.toString()
+    private val yearString: String get() = selectedDate.year.toString()
 
 
 
 
 
-
-    fun getWeekDays() : List<LocalDate>{
+    fun getWeekDates() : List<LocalDate>{
         val weekDates = mutableListOf<LocalDate>()
 
         var currentDate = startOfWeek
@@ -62,18 +63,19 @@ class CalendarHandler {
     }
 
     fun changeSelectedDay(day: LocalDate){
-        if(day > today){
+        if(day > currentDate){
             return
         }
         setSelectedDay(day)
     }
 
     private fun setSelectedDay(date: LocalDate){
-        _selectedDay = date
+        _selectedDate = date
     }
 
     fun setStartOfWeek(date: LocalDate){
-        _startOfWeek = date
+        _startOfWeek = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+
     }
 
     fun isInitialWeek(): Boolean {
@@ -82,8 +84,8 @@ class CalendarHandler {
         }
         return false
     }
-    fun getSelectedDateAsString(): String {
-        return "$dayString $dayOfMonthString, $monthString $yearString"
+    fun getSelectedDateAsString(time: String): String {
+        return "$dayString $dayOfMonthString, $time\n$monthString $yearString"
     }
 
 

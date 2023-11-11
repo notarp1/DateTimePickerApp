@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">DateTimePickerApp</string>
+    <string name="already_checked_in">You have already checked in at this time!</string>
+    <string name="select_time">Select Time</string>
+    <string name="submit">Submit</string>
+    <string name="you_cannot_check_in_in_the_future">You cannot check in, in the future!</string>
+    <string name="confirm_check_in">Confirm check-in</string>
 </resources>

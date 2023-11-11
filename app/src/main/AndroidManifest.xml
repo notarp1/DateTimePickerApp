@@ -13,9 +13,8 @@
         android:theme="@style/Theme.DateTimePickerApp"
         tools:targetApi="31">
         <activity
-            android:name=".DateTimeMainActivity"
+            android:name=".views.DateTimeMainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.DateTimePickerApp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
