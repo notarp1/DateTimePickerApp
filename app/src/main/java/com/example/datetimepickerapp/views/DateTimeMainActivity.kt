@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -34,7 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.datetimepickerapp.R
-import com.example.datetimepickerapp.domain.remote.db.Database
+import com.example.datetimepickerapp.domain.remote.mock_backend.Database
 import com.example.datetimepickerapp.domain.repository.EmployeeMockRepository
 import com.example.datetimepickerapp.getScreenWidth
 import com.example.datetimepickerapp.ui.theme.DateTimePickerAppTheme
@@ -78,26 +79,40 @@ fun MainPage(viewModel: DateTimeMainActivityViewModel) {
     var showShrinkAnimation by remember { mutableStateOf(false) }
 
 
+
+    //val viewState by viewModel.viewState
+
     ConstraintLayout(Modifier.fillMaxSize()) {
 
-        val (datePicker, timepicker, submitButton, text) = createRefs()
+        val (datePicker, timepicker, submitButton) = createRefs()
         val guideLine1f = createGuidelineFromTop(0.15f)
         val guideLine9f = createGuidelineFromTop(0.9f)
 
 
 
-
-        when {
-            viewModel.showErrorMessageSQLConstraint -> {
-                ShowToastMessage(message = stringResource(R.string.already_checked_in))
-                viewModel.setSQLiteConstraintException(false)
+        when(val viewState = viewModel.viewState){
+            is DateTimeMainActivityViewModel.ViewState.Loading ->{
+                CircularProgressIndicator()
+            }
+            is DateTimeMainActivityViewModel.ViewState.Error -> {
+                when (viewState.errorType) {
+                    is ErrorType.SQLiteConstraint -> ShowToastMessage(message = stringResource(R.string.already_checked_in))
+                    is ErrorType.UnsupportedOperationException -> ShowToastMessage(
+                        message = stringResource(
+                            R.string.you_cannot_check_in_in_the_future
+                        )
+                    )
+                    else -> {
+                        ShowToastMessage(message = viewState.errorMessage)
+                    }
+                }
             }
 
-            viewModel.showUnsupportedOperationException -> {
-                ShowToastMessage(message = stringResource(R.string.you_cannot_check_in_in_the_future))
-                viewModel.setUnsupportedOperationException(false)
-            }
+            else -> {}
         }
+
+
+
 
         DatePicker(
             daysOfWeek = weekDayCount,
@@ -131,6 +146,7 @@ fun MainPage(viewModel: DateTimeMainActivityViewModel) {
                     viewModel.postDateTime()
                 }
                 showShrinkAnimation = false
+
 
             },
             checkInInfo = viewModel.getSelectedDateAsString(),

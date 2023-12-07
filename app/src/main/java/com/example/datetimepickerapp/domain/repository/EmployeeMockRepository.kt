@@ -1,9 +1,11 @@
 package com.example.datetimepickerapp.domain.repository
 
-import com.example.datetimepickerapp.domain.remote.db.EmployeeDao
+import com.example.datetimepickerapp.domain.remote.mock_backend.EmployeeDao
 import com.example.datetimepickerapp.domain.MockAPI
 import com.example.datetimepickerapp.models.Employee
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -15,15 +17,18 @@ class EmployeeMockRepository(employeeDao: EmployeeDao) : IEmployeeMockRepository
     private var gson = Gson()
 
 
-    override suspend fun getLatestDateTime(): LocalDateTime {
-        val response = mockAPI.makeGetRequest("mock/api/date") ?: throw Exception()
+    override suspend fun getLatestDateTime(): Flow<LocalDateTime> {
 
-        if (response.isSuccessful) {
-            val jsonString = response.body().toString()
-            val employee = gson.fromJson(jsonString, Employee::class.java)
-            return createLocalDateTimeFromString(employee.dateTime)
+        return flow {
+            val response = mockAPI.makeGetRequest("mock/api/date") ?: throw Exception()
+            if(response.isSuccessful){
+                val jsonString = response.body().toString()
+                val employee = gson.fromJson(jsonString, Employee::class.java)
+                emit(createLocalDateTimeFromString(employee.dateTime))
+             return@flow
+            }
+            throw Exception("Something went wrong!")
         }
-        throw Exception("Something went wrong!")
     }
 
 

@@ -18,6 +18,13 @@ import kotlin.Exception
 class DateTimeMainActivityViewModel(private val employeeRepo: IEmployeeMockRepository) :
     ViewModel() {
 
+    sealed class ViewState {
+        data class Success(val dateTime: LocalDateTime) : ViewState()
+        data class Error(val errorType: ErrorType, val errorMessage: String) : ViewState()
+        data class Loading(val status: Boolean) : ViewState()
+    }
+
+
     private val datePickerHandler: DatePickerHandler = DatePickerHandler()
 
 
@@ -26,13 +33,10 @@ class DateTimeMainActivityViewModel(private val employeeRepo: IEmployeeMockRepos
     val currentDate: LocalDate get() = datePickerHandler.currentDate
     val selectedDate: LocalDate get() = datePickerHandler.selectedDate
 
-    var count = 0;
 
-    private var _showErrorMessageSQLConstraint: Boolean by mutableStateOf(false)
-    val showErrorMessageSQLConstraint: Boolean get() = _showErrorMessageSQLConstraint
+    private var _viewState by mutableStateOf<ViewState>(ViewState.Success(selectedDate.atTime(selectedTime)))
 
-    private var _showUnsupportedOperationException: Boolean by mutableStateOf(false)
-    val showUnsupportedOperationException: Boolean get() = _showUnsupportedOperationException
+    val viewState: ViewState get() = _viewState
 
     init {
         viewModelScope.launch {
@@ -44,14 +48,21 @@ class DateTimeMainActivityViewModel(private val employeeRepo: IEmployeeMockRepos
 
     private suspend fun getLatestDateTime() {
         try {
-            val dateTime = employeeRepo.getLatestDateTime()
-            initializeDateTime(dateTime)
+            employeeRepo.getLatestDateTime()
+                .collect { dateTime ->
+                    _viewState = ViewState.Success(dateTime)
+                    initializeDateTime(dateTime)
+                }
         } catch (e: Exception) {
-            print("Error")
+            _viewState = ViewState.Error(ErrorType.UnexpectedError,"Error fetching latest date and time.")
         }
     }
 
-    suspend fun postDateTime() {
+
+
+    suspend fun postDateTime()  {
+        setViewStateLoading()
+
         viewModelScope.launch {
             try {
                 if (selectedTime > getLocalTime()) {
@@ -61,15 +72,26 @@ class DateTimeMainActivityViewModel(private val employeeRepo: IEmployeeMockRepos
                 val dateTime = selectedDate.atTime(selectedTime)
                 employeeRepo.postDateTime(dateTime)
 
+                setSuccessViewStateDateTime(dateTime)
+
             } catch (e: SQLiteConstraintException) {
-                _showErrorMessageSQLConstraint = true
+                _viewState = ViewState.Error(ErrorType.SQLiteConstraint, e.message ?: "")
             } catch (e: UnsupportedOperationException) {
-                _showUnsupportedOperationException = true
+                _viewState = ViewState.Error(ErrorType.UnsupportedOperationException, e.message ?: "")
             } catch (e: Exception) {
-                print(e)
+                _viewState = ViewState.Error(ErrorType.UnsupportedOperationException, e.message ?: "")
             }
         }
     }
+
+    private fun setSuccessViewStateDateTime(dateTime: LocalDateTime){
+        _viewState = ViewState.Success(dateTime)
+    }
+
+    private fun setViewStateLoading(){
+        _viewState = ViewState.Loading(true)
+    }
+
 
     private fun initializeDateTime(dateTime: LocalDateTime) {
         datePickerHandler.changeSelectedDay(dateTime.toLocalDate())
@@ -125,15 +147,13 @@ class DateTimeMainActivityViewModel(private val employeeRepo: IEmployeeMockRepos
         return LocalTime.now().withSecond(0).withNano(0)
     }
 
-    /* Error Handling */
-    fun setSQLiteConstraintException(bool: Boolean) {
-        _showErrorMessageSQLConstraint = bool
-    }
 
-    fun setUnsupportedOperationException(bool: Boolean) {
-        _showUnsupportedOperationException = bool
-
-    }
 
 }
 
+
+sealed class ErrorType {
+    object SQLiteConstraint : ErrorType()
+    object UnsupportedOperationException : ErrorType()
+    object UnexpectedError : ErrorType()
+}
