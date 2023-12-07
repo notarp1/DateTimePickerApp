@@ -1,4 +1,4 @@
-package com.example.datetimepickerapp.dal.db
+package com.example.datetimepickerapp.domain.remote.db
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -7,7 +7,7 @@ import com.example.datetimepickerapp.models.Employee
 
 @Dao
 interface EmployeeDao {
-    @Query("SELECT * FROM employees ORDER BY check_in_date DESC")
+    @Query("SELECT * FROM employees ORDER BY check_in_date DESC LIMIT 1")
     suspend fun getLatestEmployee(): Employee?
 
 

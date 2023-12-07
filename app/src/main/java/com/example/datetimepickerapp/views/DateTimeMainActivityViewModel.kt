@@ -7,13 +7,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.datetimepickerapp.DatePickerHandler
-import com.example.datetimepickerapp.dal.repository.IEmployeeMockRepository
-import kotlinx.coroutines.delay
+import com.example.datetimepickerapp.domain.repository.IEmployeeMockRepository
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import kotlin.Exception
+
 
 class DateTimeMainActivityViewModel(private val employeeRepo: IEmployeeMockRepository) :
     ViewModel() {
@@ -26,6 +26,7 @@ class DateTimeMainActivityViewModel(private val employeeRepo: IEmployeeMockRepos
     val currentDate: LocalDate get() = datePickerHandler.currentDate
     val selectedDate: LocalDate get() = datePickerHandler.selectedDate
 
+    var count = 0;
 
     private var _showErrorMessageSQLConstraint: Boolean by mutableStateOf(false)
     val showErrorMessageSQLConstraint: Boolean get() = _showErrorMessageSQLConstraint
@@ -38,6 +39,8 @@ class DateTimeMainActivityViewModel(private val employeeRepo: IEmployeeMockRepos
             getLatestDateTime()
         }
     }
+
+
 
     private suspend fun getLatestDateTime() {
         try {
@@ -133,3 +136,4 @@ class DateTimeMainActivityViewModel(private val employeeRepo: IEmployeeMockRepos
     }
 
 }
+

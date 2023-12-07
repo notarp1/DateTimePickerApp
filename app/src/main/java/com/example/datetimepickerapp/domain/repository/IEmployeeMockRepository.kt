@@ -1,4 +1,4 @@
-package com.example.datetimepickerapp.dal.repository
+package com.example.datetimepickerapp.domain.repository
 
 import retrofit2.http.GET
 import retrofit2.http.POST

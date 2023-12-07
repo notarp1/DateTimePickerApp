@@ -1,6 +1,6 @@
-package com.example.datetimepickerapp.dal
+package com.example.datetimepickerapp.domain
 
-import com.example.datetimepickerapp.dal.db.EmployeeDao
+import com.example.datetimepickerapp.domain.remote.db.EmployeeDao
 import com.example.datetimepickerapp.models.Employee
 import com.google.gson.Gson
 import okhttp3.MediaType

@@ -1,7 +1,7 @@
-package com.example.datetimepickerapp.dal.repository
+package com.example.datetimepickerapp.domain.repository
 
-import com.example.datetimepickerapp.dal.db.EmployeeDao
-import com.example.datetimepickerapp.dal.MockAPI
+import com.example.datetimepickerapp.domain.remote.db.EmployeeDao
+import com.example.datetimepickerapp.domain.MockAPI
 import com.example.datetimepickerapp.models.Employee
 import com.google.gson.Gson
 import java.time.LocalDateTime
@@ -46,5 +46,7 @@ class EmployeeMockRepository(employeeDao: EmployeeDao) : IEmployeeMockRepository
         val formatter = DateTimeFormatter.ofPattern(pattern)
         return dateTime.format(formatter)
     }
+
+
 
 }

@@ -34,8 +34,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.datetimepickerapp.R
-import com.example.datetimepickerapp.dal.db.Database
-import com.example.datetimepickerapp.dal.repository.EmployeeMockRepository
+import com.example.datetimepickerapp.domain.remote.db.Database
+import com.example.datetimepickerapp.domain.repository.EmployeeMockRepository
 import com.example.datetimepickerapp.getScreenWidth
 import com.example.datetimepickerapp.ui.theme.DateTimePickerAppTheme
 import com.example.datetimepickerapp.ui.theme.components.CustomAlertDialog
@@ -80,9 +80,11 @@ fun MainPage(viewModel: DateTimeMainActivityViewModel) {
 
     ConstraintLayout(Modifier.fillMaxSize()) {
 
-        val (datePicker, timepicker, submitButton) = createRefs()
+        val (datePicker, timepicker, submitButton, text) = createRefs()
         val guideLine1f = createGuidelineFromTop(0.15f)
         val guideLine9f = createGuidelineFromTop(0.9f)
+
+
 
 
         when {
@@ -108,12 +110,13 @@ fun MainPage(viewModel: DateTimeMainActivityViewModel) {
                 })
 
 
+
+
         TimePicker(
             viewModel = viewModel,
             shrinkButton = showShrinkAnimation,
             onPressedChange = {
                 showShrinkAnimation = true
-
             },
             modifier = Modifier
                 .constrainAs(timepicker) {
@@ -383,6 +386,9 @@ fun ShowToastMessage(message: String) {
     val context = LocalContext.current
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
+
+
+
 
 
 

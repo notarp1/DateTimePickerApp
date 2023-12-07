@@ -1,4 +1,4 @@
-package com.example.datetimepickerapp.dal.db;
+package com.example.datetimepickerapp.domain.remote.db;
 
 import android.content.Context;
 
